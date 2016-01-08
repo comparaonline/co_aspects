@@ -4,7 +4,7 @@ module CoAspects
   module Annotations
     def method_added(method_name)
       super
-      (@__aspects_applyer__ ||= Applyer.new).apply(method_name)
+      (@__aspects_applyer__ ||= Applyer.new).apply(self, method_name)
     end
 
     def method_missing(method_name, *args, &block)

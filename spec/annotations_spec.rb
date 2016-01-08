@@ -14,6 +14,12 @@ class CoAspects::MockedAspect
   end
 end
 
+class CoAspects::OverflowAspect
+  def self.apply(klass, _)
+    klass.send(:define_method, :overflow) { }
+  end
+end
+
 class Dummy
   extend CoAspects::Annotations
 end
@@ -44,6 +50,10 @@ describe CoAspects::Annotations do
 
     it 'should not apply an aspect to consecutive methods' do
       expect(CoAspects::MockedAspect.methods).not_to include(:non_target)
+    end
+
+    it 'should not fail if apply creates more methods' do
+      expect { class Dummy; _overflow; def target; end end }.not_to raise_error
     end
   end
 end

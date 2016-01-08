@@ -1,6 +1,7 @@
 module CoAspects
   class Applyer
     def initialize
+      @enabled = true
       @pending = []
     end
 
@@ -9,11 +10,15 @@ module CoAspects
       @pending << AspectCall.new(aspect_class, args, block)
     end
 
-    def apply(method_name)
-      @pending.each do |pending|
-        pending.aspect.apply self, method: method_name
+    def apply(klass, method_name)
+      if @enabled
+        @enabled = false
+        @pending.each do |pending|
+          pending.aspect.apply klass, method: method_name
+        end
+        @enabled = true
+        @pending = []
       end
-      @pending = []
     end
 
     private
