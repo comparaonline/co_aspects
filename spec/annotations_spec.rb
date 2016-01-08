@@ -1,18 +1,49 @@
 require 'spec_helper'
 
-class CoAspects::ExistingAspect; end
+class CoAspects::DummyAspect
+  def self.apply(*args); end
+end
+
+class CoAspects::MockedAspect
+  class << self
+    attr_accessor :methods
+
+    def apply(_, options)
+      (@methods ||= []) << options[:method]
+    end
+  end
+end
+
+class Dummy
+  extend CoAspects::Annotations
+end
 
 describe CoAspects::Annotations do
-  before { class Dummy; extend CoAspects::Annotations; end }
-
   describe 'annotations' do
     it 'should not raise an error when the aspect exists' do
-      expect { class Dummy; _existing; end }.not_to raise_error
+      expect { class Dummy; _dummy; end }.not_to raise_error
     end
 
     it 'should raise an error when the aspect does not exist' do
       expect { class Dummy; _inexisting; end }.to raise_error(
         CoAspects::AspectNotFoundError, /InexistingAspect.*_inexisting/)
+    end
+  end
+
+  describe 'apply' do
+    before do
+      class Dummy
+        _mocked; def target; end
+        def non_target; end
+      end
+    end
+
+    it 'should apply an aspect to the target method' do
+      expect(CoAspects::MockedAspect.methods).to include(:target)
+    end
+
+    it 'should not apply an aspect to consecutive methods' do
+      expect(CoAspects::MockedAspect.methods).not_to include(:non_target)
     end
   end
 end

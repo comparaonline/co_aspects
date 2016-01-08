@@ -9,6 +9,13 @@ module CoAspects
       @pending << AspectCall.new(aspect_class, args, block)
     end
 
+    def apply(method_name)
+      @pending.each do |pending|
+        pending.aspect.apply self, method: method_name
+      end
+      @pending = []
+    end
+
     private
 
     def aspect_from_method(method_name)
