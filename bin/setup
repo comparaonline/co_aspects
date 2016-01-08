@@ -1,5 +1,8 @@
 #!/bin/bash
+
 set -euo pipefail
 IFS=$'\n\t'
 
-bundle install
+cd $(dirname $0)/..
+
+bundle check || bundle install
