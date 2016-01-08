@@ -1,5 +1,3 @@
 require "co_aspects/version"
 
-module CoAspects
-  # Your code goes here...
-end
+require "co_aspects/annotations"
