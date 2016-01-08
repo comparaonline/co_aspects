@@ -9,6 +9,7 @@ describe CoAspects::Annotations do
         def doit
         end
       end
-    }.to raise_error(CoAspects::AspectNotFoundError, /_inexisting/)
+    }.to raise_error(
+      CoAspects::AspectNotFoundError, /InexistingAspect.*_inexisting/)
   end
 end
