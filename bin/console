@@ -1,7 +1,7 @@
 #!/usr/bin/env ruby
 
-require "bundler/setup"
-require "co_aspects"
+require 'bundler/setup'
+require 'co_aspects'
 
-require "irb"
+require 'irb'
 IRB.start
