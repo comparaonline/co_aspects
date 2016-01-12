@@ -1,5 +1,5 @@
 module CoAspects
-  class Applyer
+  class Attacher
     def initialize
       @enabled = true
       @pending = []
@@ -7,10 +7,10 @@ module CoAspects
 
     def add(method_name, args, block)
       aspect_class = aspect_from_method(method_name)
-      @pending << AspectCall.new(aspect_class, args, block)
+      @pending << Annotation.new(aspect_class, args, block)
     end
 
-    def apply(klass, method_name)
+    def attach(klass, method_name)
       if @enabled
         @enabled = false
         @pending.each do |pending|
