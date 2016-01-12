@@ -11,53 +11,36 @@ describe 'Annotations' do
   end
 
   context 'when the aspect exists' do
-    it 'applies the aspect to target methods only' do
-      stub_class 'CoAspects::MockedAspect' do
+    let!(:sink_methods) do
+      stub_class('CoAspects::SinkMethodsAspect') do
         class << self
-          attr_accessor :methods
+          attr_accessor :calls
           def apply(_, options)
-            (@methods ||= []) << options[:method]
+            (@calls ||= []) << options[:method]
           end
         end
       end
+    end
 
+    it 'applies the aspect to target methods only' do
       target.class_eval do
-        _mocked; def target1; end
-        _mocked; def target2; end
+        _sink_methods; def target1; end
+        _sink_methods; def target2; end
         def non_target; end
       end
 
-      expect(CoAspects::MockedAspect.methods)
+      expect(CoAspects::SinkMethodsAspect.calls)
         .to contain_exactly(:target1, :target2)
     end
 
     it 'applies multiple aspects to the same method' do
-      stub_class 'CoAspects::FirstAspect' do
-        class << self
-          attr_accessor :methods
-          def apply(_, options)
-            (@methods ||= []) << options[:method]
-          end
-        end
-      end
-      stub_class 'CoAspects::SecondAspect' do
-        class << self
-          attr_accessor :methods
-          def apply(_, options)
-            (@methods ||= []) << options[:method]
-          end
-        end
-      end
-
       target.class_eval do
-        _first; _second; def target1; end
-        _second; def target2; end
+        _sink_methods; _sink_methods; def target1; end
         def non_target; end
       end
 
-      expect(CoAspects::FirstAspect.methods).to contain_exactly(:target1)
-      expect(CoAspects::SecondAspect.methods)
-        .to contain_exactly(:target1, :target2)
+      expect(CoAspects::SinkMethodsAspect.calls)
+        .to contain_exactly(:target1, :target1)
     end
 
     it 'does not explode when the aspect defines new methods' do
