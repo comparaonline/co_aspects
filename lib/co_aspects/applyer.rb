@@ -14,7 +14,10 @@ module CoAspects
       if @enabled
         @enabled = false
         @pending.each do |pending|
-          pending.aspect.apply klass, method: method_name, args: pending.args
+          pending.aspect.apply klass,
+            method: method_name,
+            args: pending.args,
+            block: pending.block
         end
         @enabled = true
         @pending = []

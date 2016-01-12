@@ -60,6 +60,25 @@ describe 'Annotations' do
       expect(CoAspects::OptionsAspect.arguments[:target])
         .to contain_exactly('name1', 'name2', {op1: 'val1', op2: 'val2'})
     end
+
+    it 'pass the block as options to the aspect' do
+      stub_class 'CoAspects::BlockAspect' do
+        class << self
+          attr_accessor :arguments
+          def apply(_, options)
+            (@arguments ||= {}).merge!(
+              options[:method] => options[:block].call('called'))
+          end
+        end
+      end
+
+      target.class_eval do
+        _block { |arg| arg }; def target; end
+      end
+
+      expect(CoAspects::BlockAspect.arguments[:target])
+        .to eq('called')
+    end
   end
 
   def stub_class(name, &block)
