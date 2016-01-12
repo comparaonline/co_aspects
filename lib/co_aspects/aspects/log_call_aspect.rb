@@ -1,6 +1,6 @@
 module CoAspects
   module Aspects
-    class LogCallAspect
+    class LogCallAspect < Aspector::Base
     end
   end
 end
