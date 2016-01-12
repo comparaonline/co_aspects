@@ -54,7 +54,7 @@ describe 'Annotations' do
         .not_to raise_error
     end
 
-    it 'pass arguments as options to the aspect' do
+    it 'pass the arguments as options to the aspect' do
       stub_class 'CoAspects::OptionsAspect' do
         class << self
           attr_accessor :args
