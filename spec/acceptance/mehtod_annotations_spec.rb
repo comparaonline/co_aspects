@@ -24,12 +24,40 @@ describe 'Annotations' do
       target.class_eval do
         _mocked; def target1; end
         _mocked; def target2; end
-        _mocked; def target3; end
         def non_target; end
       end
 
       expect(CoAspects::MockedAspect.methods)
-        .to contain_exactly(:target1, :target2, :target3)
+        .to contain_exactly(:target1, :target2)
+    end
+
+    it 'applies multiple aspects to the same method' do
+      stub_class 'CoAspects::FirstAspect' do
+        class << self
+          attr_accessor :methods
+          def apply(_, options)
+            (@methods ||= []) << options[:method]
+          end
+        end
+      end
+      stub_class 'CoAspects::SecondAspect' do
+        class << self
+          attr_accessor :methods
+          def apply(_, options)
+            (@methods ||= []) << options[:method]
+          end
+        end
+      end
+
+      target.class_eval do
+        _first; _second; def target1; end
+        _second; def target2; end
+        def non_target; end
+      end
+
+      expect(CoAspects::FirstAspect.methods).to contain_exactly(:target1)
+      expect(CoAspects::SecondAspect.methods)
+        .to contain_exactly(:target1, :target2)
     end
 
     it 'does not explode when the aspect defines new methods' do
@@ -46,9 +74,9 @@ describe 'Annotations' do
     it 'pass arguments as options to the aspect' do
       stub_class 'CoAspects::OptionsAspect' do
         class << self
-          attr_accessor :arguments
+          attr_accessor :args
           def apply(_, options)
-            (@arguments ||= {}).merge!(options[:method] => options[:args])
+            @args = options[:args]
           end
         end
       end
@@ -57,17 +85,16 @@ describe 'Annotations' do
         _options 'name1', 'name2', op1: 'val1', op2: 'val2'; def target; end
       end
 
-      expect(CoAspects::OptionsAspect.arguments[:target])
+      expect(CoAspects::OptionsAspect.args)
         .to contain_exactly('name1', 'name2', {op1: 'val1', op2: 'val2'})
     end
 
     it 'pass the block as options to the aspect' do
       stub_class 'CoAspects::BlockAspect' do
         class << self
-          attr_accessor :arguments
+          attr_accessor :block
           def apply(_, options)
-            (@arguments ||= {}).merge!(
-              options[:method] => options[:block].call('called'))
+            @block = options[:block].call('called')
           end
         end
       end
@@ -76,8 +103,7 @@ describe 'Annotations' do
         _block { |arg| arg }; def target; end
       end
 
-      expect(CoAspects::BlockAspect.arguments[:target])
-        .to eq('called')
+      expect(CoAspects::BlockAspect.block).to eq('called')
     end
   end
 
