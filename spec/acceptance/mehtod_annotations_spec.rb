@@ -15,7 +15,9 @@ describe 'Annotations' do
       stub_class 'CoAspects::MockedAspect' do
         class << self
           attr_accessor :methods
-          def apply(_, options); (@methods ||= []) << options[:method]; end
+          def apply(_, options)
+            (@methods ||= []) << options[:method]
+          end
         end
       end
 
@@ -39,6 +41,24 @@ describe 'Annotations' do
 
       expect { target.class_eval { _overflow; def overflow; end } }
         .not_to raise_error
+    end
+
+    it 'pass arguments as options to the aspect' do
+      stub_class 'CoAspects::OptionsAspect' do
+        class << self
+          attr_accessor :arguments
+          def apply(_, options)
+            (@arguments ||= {}).merge!(options[:method] => options[:args])
+          end
+        end
+      end
+
+      target.class_eval do
+        _options 'name1', 'name2', op1: 'val1', op2: 'val2'; def target; end
+      end
+
+      expect(CoAspects::OptionsAspect.arguments[:target])
+        .to contain_exactly('name1', 'name2', {op1: 'val1', op2: 'val2'})
     end
   end
 
