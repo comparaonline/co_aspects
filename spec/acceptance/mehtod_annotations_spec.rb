@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe 'Annotations' do
-  let(:target) { stub_class('Target') { extend CoAspects::Callbacks } }
+  let(:target) { stub_class('Target') { aspects_annotations! } }
 
   context 'when the aspect does not exist' do
     it 'raises an error' do
