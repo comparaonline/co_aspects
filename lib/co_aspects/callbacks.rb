@@ -1,7 +1,5 @@
-require 'active_support/core_ext/string/inflections'
-
 module CoAspects
-  module Annotations
+  module Callbacks
     def method_added(method_name)
       super
       (@__aspects_attacher__ ||= Attacher.new).attach(self, method_name)
