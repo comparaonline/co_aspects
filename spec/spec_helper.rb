@@ -4,7 +4,9 @@ require 'co_aspects'
 module Helpers
   def stub_class(name, &block)
     stub_const name, Class.new
-    name.constantize.class_eval(&block)
+    klass = name.constantize
+    klass.class_eval(&block) if block
+    klass
   end
 end
 

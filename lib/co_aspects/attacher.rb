@@ -33,7 +33,7 @@ module CoAspects
     end
 
     def aspect_name_from_method(annotation)
-      "::CoAspects::#{annotation[1..-1].camelize}Aspect"
+      "::CoAspects::Aspects::#{annotation[1..-1].camelize}Aspect"
     end
 
     def blocking
