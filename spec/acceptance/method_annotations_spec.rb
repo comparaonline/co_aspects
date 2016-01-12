@@ -89,9 +89,4 @@ describe 'Annotations' do
       expect(CoAspects::BlockAspect.block).to eq('called')
     end
   end
-
-  def stub_class(name, &block)
-    stub_const name, Class.new
-    name.constantize.class_eval(&block)
-  end
 end
