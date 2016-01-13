@@ -40,9 +40,11 @@ module CoAspects
       @enabled = true unless defined?(@enabled)
       return unless @enabled
       @enabled = false
-      yield
-    ensure
-      @enabled = true
+      begin
+        yield
+      ensure
+        @enabled = true
+      end
     end
   end
 end
