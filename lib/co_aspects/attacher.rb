@@ -3,7 +3,6 @@ require 'active_support/core_ext/string/inflections'
 module CoAspects
   class Attacher
     def initialize
-      @enabled = true
       @pending = []
     end
 
@@ -13,15 +12,13 @@ module CoAspects
     end
 
     def attach(klass, method_name)
-      if @enabled
-        @enabled = false
+      blocking do
         @pending.each do |pending|
           pending.aspect.apply klass,
             method: method_name,
             args: pending.args,
             block: pending.block
         end
-        @enabled = true
         @pending = []
       end
     end
@@ -37,6 +34,15 @@ module CoAspects
 
     def aspect_name_from_method(annotation)
       "::CoAspects::#{annotation[1..-1].camelize}Aspect"
+    end
+
+    def blocking
+      @enabled = true unless defined?(@enabled)
+      if @enabled
+        @enabled = false
+        yield
+        @enabled = true
+      end
     end
   end
 end
