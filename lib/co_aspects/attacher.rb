@@ -38,11 +38,11 @@ module CoAspects
 
     def blocking
       @enabled = true unless defined?(@enabled)
-      if @enabled
-        @enabled = false
-        yield
-        @enabled = true
-      end
+      return unless @enabled
+      @enabled = false
+      yield
+    ensure
+      @enabled = true
     end
   end
 end
