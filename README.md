@@ -47,6 +47,28 @@ followed by "Aspect". For example, the `_rescue_and_notify` will attach the
 Several aspects can be attached to the same method, and the same aspect can be
 attached to different methods.
 
+### Arguments
+
+Aspects can receive arguments and a block if it needs some dynamic information
+from the call. These arguments and block must be passed via the annotation:
+
+```ruby
+class Quoter
+  ...
+
+  _stats_increment as: 'ws.quoteapp' { |quote| key(quote) }
+  def save_quote(quote)
+    ...
+  end
+end
+```
+
+The `StatsIncrementAspect`, for example, can receive an alias to override the
+default StatsD prefix key, and a block to include a dynamic part at the end of
+the StatsD key.
+
+Each aspect defines which arguments it supports and if it support a block.
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run
