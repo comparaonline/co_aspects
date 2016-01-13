@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -euo pipefail
+IFS=$'\n\t'
+
+cd $(dirname $0)/..
+
+mkdir -p .caches
+
+if [[ $(cat .caches/gemspec 2>&1) = $(shasum *.gemspec) ]]; then
+  echo "✓ Gemspec cache up to date."
+else
+  echo "✗ Gemspec cache invalid."
+
+  bundle check || bundle install
+  echo "✓ Bundle installed"
+
+  shasum *.gemspec > .caches/gemspec
+  echo "✓ Gemspec cache updated."
+fi

@@ -1,8 +1,10 @@
 *.gem
 *.rbc
+/.caches/
 /.config
-/coverage/
 /InstalledFiles
+/Gemfile.lock
+/coverage/
 /pkg/
 /spec/reports/
 /test/tmp/
