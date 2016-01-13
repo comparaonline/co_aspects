@@ -14,7 +14,8 @@ describe CoAspects::Aspects::LogCallAspect do
   end
 
   it 'logs the method call with arguments' do
-    expect(Rails).to receive_message_chain(:logger, :debug).with(/log_when_called.*first.*second.*result/)
+    expect(Rails).to receive_message_chain(:logger, :debug)
+      .with(/log_when_called.*first.*second.*result/)
     Target.new.log_when_called('first', 'second')
   end
 
