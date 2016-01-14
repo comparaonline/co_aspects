@@ -36,13 +36,16 @@ module CoAspects
     #   # => StatsD.increment('my_key.dynamic')
     class StatsIncrementAspect < Aspector::Base
       around interception_arg: true, method_arg: true do |interception, method, proxy, *args, &block|
-        proxy.call(*args, &block)
-        key = interception.options[:annotation][:as]
-        key ||= self.class.name.underscore.gsub('/', '.') + ".#{method}"
+        result = proxy.call(*args, &block)
+
+        key = interception.options[:annotation][:as] ||
+          self.class.name.underscore.gsub('/', '.') + ".#{method}"
         if interception.options[:block]
-          key = "#{key}.#{interception.options[:block].call(*args, &block)}"
+          key += ".#{interception.options[:block].call(*args, &block)}"
         end
         StatsD.increment(key)
+
+        result
       end
     end
   end

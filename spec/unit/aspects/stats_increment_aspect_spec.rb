@@ -26,4 +26,9 @@ describe CoAspects::Aspects::StatsIncrementAspect do
       .with('custom.key.dynamic')
     Name::Target.new.perform_dynamic_key('dynamic')
   end
+
+  it 'returns the correct value' do
+    allow(StatsD).to receive(:increment)
+    expect(Name::Target.new.perform_dynamic_key('dynamic')).to eq('dynamic')
+  end
 end
