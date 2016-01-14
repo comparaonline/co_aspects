@@ -21,4 +21,22 @@ describe CoAspects::Aspects::RescueAndNotifyAspect do
     expect(NewRelic::Agent).not_to receive(:notice_error)
     expect(Target.new.perform(true)).to eq(:success)
   end
+
+  context 'with test mode enabled' do
+    around do |example|
+      CoAspects::Aspects::RescueAndNotifyAspect.enable_test_mode!
+      example.run
+      CoAspects::Aspects::RescueAndNotifyAspect.disable_test_mode!
+    end
+
+    it 'propagates the error if something is raised' do
+      expect(NewRelic::Agent).not_to receive(:notice_error)
+      expect{Target.new.perform(false)}.to raise_error(/error has occured/)
+    end
+
+    it 'does not notify new relic if there is no error' do
+      expect(NewRelic::Agent).not_to receive(:notice_error)
+      expect(Target.new.perform(true)).to eq(:success)
+    end
+  end
 end
