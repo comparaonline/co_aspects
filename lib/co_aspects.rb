@@ -8,4 +8,6 @@ require 'co_aspects/module'
 
 require 'aspector'
 
+require 'co_aspects/aspects/deprecate_aspect'
 require 'co_aspects/aspects/log_call_aspect'
+require 'co_aspects/aspects/rescue_and_notify_aspect'
