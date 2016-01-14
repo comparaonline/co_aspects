@@ -1,4 +1,5 @@
 require 'statsd-instrument'
+require_relative 'statsd_helper'
 
 module CoAspects
   module Aspects
@@ -36,11 +37,11 @@ module CoAspects
     #   # => StatsD.measure('my_key.dynamic')
     class StatsMeasureAspect < Aspector::Base
       around interception_arg: true, method_arg: true do |interception, method, proxy, *args, &block|
-        key = interception.options[:annotation][:as] ||
-          self.class.name.underscore.tr('/', '.') + ".#{method}"
-        if interception.options[:block]
-          key += ".#{interception.options[:block].call(*args, &block)}"
-        end
+        key = StatsdHelper.key(self.class,
+                               method,
+                               args,
+                               interception.options[:annotation][:as],
+                               interception.options[:block])
         StatsD.measure(key) do
           proxy.call(*args, &block)
         end

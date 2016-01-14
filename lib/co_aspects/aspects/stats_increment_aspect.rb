@@ -38,11 +38,11 @@ module CoAspects
       around interception_arg: true, method_arg: true do |interception, method, proxy, *args, &block|
         result = proxy.call(*args, &block)
 
-        key = interception.options[:annotation][:as] ||
-          self.class.name.underscore.tr('/', '.') + ".#{method}"
-        if interception.options[:block]
-          key += ".#{interception.options[:block].call(*args, &block)}"
-        end
+        key = StatsdHelper.key(self.class,
+                               method,
+                               args,
+                               interception.options[:annotation][:as],
+                               interception.options[:block])
         StatsD.increment(key)
 
         result
