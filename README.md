@@ -71,8 +71,8 @@ Each aspect defines which arguments it supports and if it support a block.
 
 ## Aspects
 
-For documentation on the available aspects, refer to the each aspect class
-located in the [aspects
+For documentation on the available aspects, refer to each aspect class located
+in the [aspects
 directory](https://github.com/comparaonline/co_aspects/tree/master/lib/co_aspects/aspects).
 
 ## Development
