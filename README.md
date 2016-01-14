@@ -69,6 +69,12 @@ the StatsD key.
 
 Each aspect defines which arguments it supports and if it support a block.
 
+## Aspects
+
+For documentation on the available aspects, refer to each aspect class located
+in the [aspects
+directory](https://github.com/comparaonline/co_aspects/tree/master/lib/co_aspects/aspects).
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run

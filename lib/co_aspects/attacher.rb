@@ -33,16 +33,18 @@ module CoAspects
     end
 
     def aspect_name_from_method(annotation)
-      "::CoAspects::#{annotation[1..-1].camelize}Aspect"
+      "::CoAspects::Aspects::#{annotation[1..-1].camelize}Aspect"
     end
 
     def blocking
       @enabled = true unless defined?(@enabled)
       return unless @enabled
       @enabled = false
-      yield
-    ensure
-      @enabled = true
+      begin
+        yield
+      ensure
+        @enabled = true
+      end
     end
   end
 end

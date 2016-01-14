@@ -12,7 +12,7 @@ describe 'Annotations' do
 
   context 'when the aspect exists' do
     let!(:sink_methods) do
-      stub_class('CoAspects::SinkMethodsAspect') do
+      stub_class('CoAspects::Aspects::SinkMethodsAspect') do
         class << self
           attr_accessor :calls
           def apply(_, options)
@@ -29,7 +29,7 @@ describe 'Annotations' do
         def non_target; end
       end
 
-      expect(CoAspects::SinkMethodsAspect.calls)
+      expect(CoAspects::Aspects::SinkMethodsAspect.calls)
         .to contain_exactly(:target1, :target2)
     end
 
@@ -39,12 +39,12 @@ describe 'Annotations' do
         def non_target; end
       end
 
-      expect(CoAspects::SinkMethodsAspect.calls)
+      expect(CoAspects::Aspects::SinkMethodsAspect.calls)
         .to contain_exactly(:target1, :target1)
     end
 
     it 'does not explode when the aspect defines new methods' do
-      stub_class 'CoAspects::OverflowAspect' do
+      stub_class 'CoAspects::Aspects::OverflowAspect' do
         def self.apply(target, _)
           target.send(:define_method, :overflow) { }
         end
@@ -55,7 +55,7 @@ describe 'Annotations' do
     end
 
     it 'pass the arguments as options to the aspect' do
-      stub_class 'CoAspects::OptionsAspect' do
+      stub_class 'CoAspects::Aspects::OptionsAspect' do
         class << self
           attr_accessor :args
           def apply(_, options)
@@ -68,12 +68,12 @@ describe 'Annotations' do
         _options 'name1', 'name2', op1: 'val1', op2: 'val2'; def target; end
       end
 
-      expect(CoAspects::OptionsAspect.args)
+      expect(CoAspects::Aspects::OptionsAspect.args)
         .to contain_exactly('name1', 'name2', {op1: 'val1', op2: 'val2'})
     end
 
     it 'pass the block as options to the aspect' do
-      stub_class 'CoAspects::BlockAspect' do
+      stub_class 'CoAspects::Aspects::BlockAspect' do
         class << self
           attr_accessor :block
           def apply(_, options)
@@ -86,12 +86,7 @@ describe 'Annotations' do
         _block { |arg| arg }; def target; end
       end
 
-      expect(CoAspects::BlockAspect.block).to eq('called')
+      expect(CoAspects::Aspects::BlockAspect.block).to eq('called')
     end
-  end
-
-  def stub_class(name, &block)
-    stub_const name, Class.new
-    name.constantize.class_eval(&block)
   end
 end
