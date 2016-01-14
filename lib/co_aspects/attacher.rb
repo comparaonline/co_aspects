@@ -28,8 +28,7 @@ module CoAspects
     def aspect_from_method(method_name)
       aspect_name_from_method(method_name).constantize
     rescue NameError => e
-      fail AspectNotFoundError,
-        "Aspect `#{e.name}` for annotation `#{method_name}` does not exist."
+      fail AspectNotFoundError.new(e.name, method_name)
     end
 
     def aspect_name_from_method(annotation)

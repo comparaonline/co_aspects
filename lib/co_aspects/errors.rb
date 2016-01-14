@@ -1,3 +1,7 @@
 module CoAspects
-  class AspectNotFoundError < StandardError; end
+  class AspectNotFoundError < StandardError
+    def initialize(aspect, method)
+      super("Aspect `#{aspect}` for annotation `#{method}` does not exist.")
+    end
+  end
 end
