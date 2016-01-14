@@ -49,8 +49,9 @@ attached to different methods.
 
 ### Arguments
 
-Aspects can receive arguments and a block if it needs some dynamic information
-from the call. These arguments and block must be passed via the annotation:
+Aspects can receive hash arguments and a block if it needs some dynamic
+information from the call. These hash arguments and block must be passed via the
+annotation:
 
 ```ruby
 class Quoter
