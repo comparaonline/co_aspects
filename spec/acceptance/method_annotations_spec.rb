@@ -76,7 +76,7 @@ describe 'Annotations' do
         class << self
           attr_accessor :options
           def apply(_, options)
-            @options = options[:options]
+            @options = options[:annotation]
           end
         end
       end

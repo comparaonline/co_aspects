@@ -37,11 +37,8 @@ module CoAspects
     class StatsIncrementAspect < Aspector::Base
       around interception_arg: true, method_arg: true do |interception, method, proxy, *args, &block|
         proxy.call(*args, &block)
-        if interception.options[:options][:as]
-          key = interception.options[:options][:as]
-        else
-          key = self.class.name.underscore.gsub('/', '.') + ".#{method}"
-        end
+        key = interception.options[:annotation][:as]
+        key ||= self.class.name.underscore.gsub('/', '.') + ".#{method}"
         if interception.options[:block]
           key = "#{key}.#{interception.options[:block].call(*args, &block)}"
         end

@@ -16,7 +16,7 @@ module CoAspects
         @pending.each do |pending|
           pending.aspect.apply klass,
             method: method_name,
-            options: pending.options,
+            annotation: pending.options,
             block: pending.block
         end
         @pending = []
