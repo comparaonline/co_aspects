@@ -23,6 +23,7 @@ module CoAspects
         old_method_name = "#{self.class}.#{method}"
         new_method_name = interception.options[:args][0][:use]
         Kernel.warn("DEPRECATION WARNING: #{old_method_name} deprecated, use #{new_method_name} instead.")
+        proxy.call(*args, &block)
       end
     end
   end

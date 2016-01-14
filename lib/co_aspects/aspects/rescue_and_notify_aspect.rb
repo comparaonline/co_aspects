@@ -49,7 +49,7 @@ module CoAspects
         end
       end
 
-      around method_arg: true do |method, proxy, *args, &block|
+      around method_arg: true do |_, proxy, *args, &block|
         begin
           proxy.call(*args, &block)
         rescue => e
