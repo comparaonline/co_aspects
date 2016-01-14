@@ -42,7 +42,7 @@ module CoAspects
           key += ".#{interception.options[:block].call(*args, &block)}"
         end
         StatsD.measure(key) do
-          result = proxy.call(*args, &block)
+          proxy.call(*args, &block)
         end
       end
     end
