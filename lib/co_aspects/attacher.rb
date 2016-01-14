@@ -6,9 +6,9 @@ module CoAspects
       @pending = []
     end
 
-    def add(method_name, args, block)
+    def add(method_name, options, block)
       aspect_class = aspect_from_method(method_name)
-      @pending << Annotation.new(aspect_class, args, block)
+      @pending << Annotation.new(aspect_class, options, block)
     end
 
     def attach(klass, method_name)
@@ -16,7 +16,7 @@ module CoAspects
         @pending.each do |pending|
           pending.aspect.apply klass,
             method: method_name,
-            args: pending.args,
+            options: pending.options,
             block: pending.block
         end
         @pending = []

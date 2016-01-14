@@ -36,8 +36,8 @@ module CoAspects
     #   # => StatsD.measure('my_key.dynamic')
     class StatsMeasureAspect < Aspector::Base
       around interception_arg: true, method_arg: true do |interception, method, proxy, *args, &block|
-        if interception.options[:args][0]
-          key = interception.options[:args][0][:as]
+        if interception.options[:options][:as]
+          key = interception.options[:options][:as]
         else
           key = self.class.name.underscore.gsub('/', '.') + ".#{method}"
         end

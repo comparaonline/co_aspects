@@ -28,8 +28,8 @@ module CoAspects
     class DeprecateAspect < Aspector::Base
       around interception_arg: true, method_arg: true do |interception, method, proxy, *args, &block|
         old_method_name = "#{self.class}.#{method}"
-        if interception.options[:args][0]
-          new_method_name = interception.options[:args][0][:use]
+        if interception.options[:options]
+          new_method_name = interception.options[:options][:use]
           new_method_suggestion = ", use #{new_method_name} instead"
         end
         Kernel.warn("DEPRECATION WARNING: #{old_method_name} deprecated#{new_method_suggestion}.")

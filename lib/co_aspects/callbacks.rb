@@ -7,7 +7,9 @@ module CoAspects
 
     def method_missing(method_name, *args, &block)
       return super unless /\A_/ =~ method_name
-      (@__aspects_attacher__ ||= Attacher.new).add(method_name, args, block)
+      args.each { |arg| fail InvalidArgument.new(arg) unless arg.kind_of?(Hash) }
+      options = Hash[*args.map(&:to_a).flatten]
+      (@__aspects_attacher__ ||= Attacher.new).add(method_name, options, block)
     end
   end
 end
