@@ -39,7 +39,7 @@ module CoAspects
         result = proxy.call(*args, &block)
 
         key = interception.options[:annotation][:as] ||
-          self.class.name.underscore.gsub('/', '.') + ".#{method}"
+          self.class.name.underscore.tr('/', '.') + ".#{method}"
         if interception.options[:block]
           key += ".#{interception.options[:block].call(*args, &block)}"
         end

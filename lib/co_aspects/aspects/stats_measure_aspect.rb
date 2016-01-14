@@ -37,7 +37,7 @@ module CoAspects
     class StatsMeasureAspect < Aspector::Base
       around interception_arg: true, method_arg: true do |interception, method, proxy, *args, &block|
         key = interception.options[:annotation][:as] ||
-          self.class.name.underscore.gsub('/', '.') + ".#{method}"
+          self.class.name.underscore.tr('/', '.') + ".#{method}"
         if interception.options[:block]
           key += ".#{interception.options[:block].call(*args, &block)}"
         end
