@@ -8,7 +8,7 @@ describe CoAspects::Aspects::StatsIncrementAspect do
       def perform_default_key
         :success
       end
-      _stats_increment(as: 'custom.key') { |arg| arg.to_s }
+      _stats_increment(as: 'CUSTOM.KEY') { |arg| arg.to_s }
       def perform_dynamic_key(arg)
         arg
       end
