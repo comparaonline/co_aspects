@@ -11,6 +11,7 @@ describe CoAspects::Aspects::DeprecateAspect do
       end
       _deprecate
       def deprecated_method
+        :success
       end
     end
   end
@@ -30,5 +31,10 @@ describe CoAspects::Aspects::DeprecateAspect do
   it 'does not warn about non deprecated methods' do
     expect(Kernel).not_to receive(:warn)
     Target.new.new_method
+  end
+
+  it 'returns the correct value' do
+    allow(Kernel).to receive(:warn)
+    expect(Target.new.deprecated_method).to eq(:success)
   end
 end

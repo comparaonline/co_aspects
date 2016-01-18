@@ -54,7 +54,7 @@ describe 'Annotations' do
         .not_to raise_error
     end
 
-    it 'pass the arguments as options to the aspect' do
+    it 'does not support arguments outside a hash' do
       stub_class 'CoAspects::Aspects::OptionsAspect' do
         class << self
           attr_accessor :args
@@ -64,12 +64,29 @@ describe 'Annotations' do
         end
       end
 
-      target.class_eval do
-        _options 'name1', 'name2', op1: 'val1', op2: 'val2'; def target; end
+      expect {
+        target.class_eval do
+          _options 'name'; def target; end
+        end
+      }.to raise_error(CoAspects::InvalidArgument, /name/)
+    end
+
+    it 'pass the options to the aspect' do
+      stub_class 'CoAspects::Aspects::OptionsAspect' do
+        class << self
+          attr_accessor :options
+          def apply(_, options)
+            @options = options[:annotation]
+          end
+        end
       end
 
-      expect(CoAspects::Aspects::OptionsAspect.args)
-        .to contain_exactly('name1', 'name2', {op1: 'val1', op2: 'val2'})
+      target.class_eval do
+        _options op1: 'val1', op2: 'val2'; def target; end
+      end
+
+      expect(CoAspects::Aspects::OptionsAspect.options)
+        .to eq(op1: 'val1', op2: 'val2')
     end
 
     it 'pass the block as options to the aspect' do

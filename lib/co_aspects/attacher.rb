@@ -6,9 +6,9 @@ module CoAspects
       @pending = []
     end
 
-    def add(method_name, args, block)
+    def add(method_name, options, block)
       aspect_class = aspect_from_method(method_name)
-      @pending << Annotation.new(aspect_class, args, block)
+      @pending << Annotation.new(aspect_class, options, block)
     end
 
     def attach(klass, method_name)
@@ -16,7 +16,7 @@ module CoAspects
         @pending.each do |pending|
           pending.aspect.apply klass,
             method: method_name,
-            args: pending.args,
+            annotation: pending.options,
             block: pending.block
         end
         @pending = []
@@ -28,8 +28,7 @@ module CoAspects
     def aspect_from_method(method_name)
       aspect_name_from_method(method_name).constantize
     rescue NameError => e
-      fail AspectNotFoundError,
-        "Aspect `#{e.name}` for annotation `#{method_name}` does not exist."
+      fail AspectNotFoundError.new(e.name, method_name)
     end
 
     def aspect_name_from_method(annotation)
