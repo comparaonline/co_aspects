@@ -8,7 +8,7 @@ describe CoAspects::Aspects::StatsMeasureAspect do
       def perform_default_key
         :success
       end
-      _stats_measure(as: 'custom.key') { |arg| arg.to_s }
+      _stats_measure(as: 'CUSTOM.KEY') { |arg| arg.to_s }
       def perform_dynamic_key(arg)
         arg
       end

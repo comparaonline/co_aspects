@@ -10,7 +10,7 @@ module CoAspects
       def key(klass, method_name, method_args, statsd_prefix, statsd_block)
         key = statsd_prefix || default_prefix(klass, method_name)
         key += ".#{statsd_block.call(*method_args)}" if statsd_block
-        key
+        key.downcase
       end
     end
   end
