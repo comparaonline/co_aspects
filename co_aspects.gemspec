@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'activesupport', '>= 3.0'
   spec.add_dependency 'aspector', '~> 0.14.0'
-  spec.add_dependency 'newrelic_rpm', '~> 3.14'
+  spec.add_dependency 'newrelic_rpm', '>= 3.1.1'
   spec.add_dependency 'statsd-instrument', '~> 2.0'
 
   spec.add_development_dependency 'bundler', '~> 1.9'
