@@ -8,7 +8,15 @@ describe CoAspects::Aspects::StatsMeasureAspect do
       def perform_default_key
         :success
       end
-      _stats_measure(as: 'CUSTOM.KEY') { |arg| arg.to_s }
+      _stats_measure as: 'custom.key'
+      def perform_only_as
+        :success
+      end
+      _stats_measure { |arg| arg.to_s }
+      def perform_only_block(arg)
+        arg
+      end
+      _stats_measure(as: 'CUSTOM.KEY.') { |arg| arg.to_s }
       def perform_dynamic_key(arg)
         arg
       end
@@ -21,7 +29,19 @@ describe CoAspects::Aspects::StatsMeasureAspect do
     Name::Target.new.perform_default_key
   end
 
-  it 'builds a dynamic key if given' do
+  it 'uses only the block if present' do
+    expect(StatsD).to receive(:measure) { |_, &block| block.call }
+      .with('dynamic.key')
+    Name::Target.new.perform_only_block('dynamic.key')
+  end
+
+  it 'uses only the alias if present' do
+    expect(StatsD).to receive(:measure) { |_, &block| block.call }
+      .with('custom.key')
+    Name::Target.new.perform_only_as
+  end
+
+  it 'uses both alias and block if both are present' do
     expect(StatsD).to receive(:measure) { |_, &block| block.call }
       .with('custom.key.dynamic')
     Name::Target.new.perform_dynamic_key('dynamic')
