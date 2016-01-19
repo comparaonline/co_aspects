@@ -12,6 +12,10 @@ module CoAspects
     # added at the end using a block that receives the same arguments as the
     # method.
     #
+    # Note: The default key is used if both `as` and block are missing. If
+    # either is present, the default is not used and if both are present, then
+    # they are simply concatenated.
+    #
     # Examples
     #
     #   module MyModule
