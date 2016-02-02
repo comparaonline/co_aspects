@@ -7,13 +7,13 @@ module CoAspects
         klass.name.underscore.tr('/', '.') + ".#{method_name}"
       end
 
-      def key(klass, method_name, method_args, statsd_prefix, statsd_block)
+      def key(instance, method_name, method_args, statsd_prefix, statsd_block)
         if statsd_prefix || statsd_block
           key = statsd_prefix.to_s
           key += statsd_block.call(*method_args) if statsd_block
           key.downcase
         else
-          default_prefix(klass, method_name)
+          default_prefix(instance.class, method_name)
         end
       end
     end
