@@ -14,6 +14,7 @@ describe CoAspects::Aspects::RescueAndNotifyAspect do
 
   it 'notifies new relic if an error is raised' do
     expect(NewRelic::Agent).to receive(:notice_error)
+      .with(kind_of(Exception), {})
     expect(Target.new.perform(false)).to eq(nil)
   end
 
