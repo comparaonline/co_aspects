@@ -56,7 +56,11 @@ module CoAspects
           if RescueAndNotifyAspect.test_mode
             raise e
           else
-            NewRelic::Agent.notice_error(e, {})
+            opts = {}
+            if e.respond_to?(:newrelic_opts)
+              opts.merge!(e.newrelic_opts)
+            end
+            NewRelic::Agent.notice_error(e, opts)
           end
         end
       end
