@@ -3,6 +3,9 @@ require 'spec_helper'
 describe CoAspects::Aspects::StatsMeasureAspect do
   before do
     stub_class('Name::Target') do
+      def initialize
+        @var = 'hello.world'
+      end
       aspects_annotations!
       _stats_measure
       def perform_default_key
@@ -15,6 +18,10 @@ describe CoAspects::Aspects::StatsMeasureAspect do
       _stats_measure { |arg| arg.to_s }
       def perform_only_block(arg)
         arg
+      end
+      _stats_measure { @var }
+      def perform_block_scope
+        :success
       end
       _stats_measure(as: 'CUSTOM.KEY.') { |arg| arg.to_s }
       def perform_dynamic_key(arg)
@@ -33,6 +40,12 @@ describe CoAspects::Aspects::StatsMeasureAspect do
     expect(StatsD).to receive(:measure) { |_, &block| block.call }
       .with('dynamic.key')
     Name::Target.new.perform_only_block('dynamic.key')
+  end
+
+  it 'can access instance variables via the block' do
+    expect(StatsD).to receive(:measure) { |_, &block| block.call }
+      .with('hello.world')
+    Name::Target.new.perform_block_scope
   end
 
   it 'uses only the alias if present' do

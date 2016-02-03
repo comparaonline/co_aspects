@@ -4,6 +4,9 @@ describe CoAspects::Aspects::StatsIncrementAspect do
   before do
     stub_class('Name::Target') do
       aspects_annotations!
+      def initialize
+        @var = 'hello.world'
+      end
       _stats_increment
       def perform_default_key
         :success
@@ -15,6 +18,10 @@ describe CoAspects::Aspects::StatsIncrementAspect do
       _stats_increment { |arg| arg.to_s }
       def perform_only_block(arg)
         arg
+      end
+      _stats_increment { @var }
+      def perform_block_scope
+        :success
       end
       _stats_increment(as: 'CUSTOM.KEY.') { |arg| arg.to_s }
       def perform_dynamic_key(arg)
@@ -33,6 +40,12 @@ describe CoAspects::Aspects::StatsIncrementAspect do
     expect(StatsD).to receive(:increment)
       .with('dynamic.key')
     Name::Target.new.perform_only_block('dynamic.key')
+  end
+
+  it 'can access instance variables via the block' do
+    expect(StatsD).to receive(:increment)
+      .with('hello.world')
+    Name::Target.new.perform_block_scope
   end
 
   it 'uses only the alias if present' do
