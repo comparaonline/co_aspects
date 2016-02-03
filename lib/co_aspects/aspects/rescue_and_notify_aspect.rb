@@ -1,9 +1,16 @@
 require 'newrelic_rpm'
+require_relative 'rescue_and_notify_error'
 
 module CoAspects
   module Aspects
     # Rescues any error and notifies NewRelic about it, without raising it
     # again.
+    #
+    # If the exception responds to `newrelic_opts` then the return value will be
+    # used as the noticed error options.
+    #
+    # Important: The class `CoAspects::Aspects::RescueAndNotifyError` can be
+    # used as parent to custom error classes.
     #
     # Important: If CoAspects::Aspects::RescueAndNotifyAspect.enable_test_mode!
     # is executed, then instead of calling NewRelic, it will raise the exception
@@ -56,7 +63,11 @@ module CoAspects
           if RescueAndNotifyAspect.test_mode
             raise e
           else
-            NewRelic::Agent.notice_error(e, stack_trace: e.backtrace)
+            opts = {}
+            if e.respond_to?(:newrelic_opts)
+              opts.merge!(e.newrelic_opts)
+            end
+            NewRelic::Agent.notice_error(e, opts)
           end
         end
       end

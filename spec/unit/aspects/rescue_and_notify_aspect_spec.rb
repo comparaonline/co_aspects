@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe CoAspects::Aspects::RescueAndNotifyAspect do
+  class FakeError < CoAspects::Aspects::RescueAndNotifyError
+  end
+
   before do
     stub_class('Target') do
       aspects_annotations!
@@ -9,12 +12,23 @@ describe CoAspects::Aspects::RescueAndNotifyAspect do
         fail 'An error has occured' unless work
         :success
       end
+      _rescue_and_notify
+      def perform_with_options
+        fail FakeError.new('Message', {op: :val})
+      end
     end
   end
 
   it 'notifies new relic if an error is raised' do
     expect(NewRelic::Agent).to receive(:notice_error)
+      .with(kind_of(Exception), {})
     expect(Target.new.perform(false)).to eq(nil)
+  end
+
+  it 'notifies new relic with custom params if given' do
+    expect(NewRelic::Agent).to receive(:notice_error)
+      .with(kind_of(FakeError), {op: :val})
+    expect(Target.new.perform_with_options).to eq(nil)
   end
 
   it 'does not notify new relic if there is no error' do
